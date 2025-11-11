@@ -1,4 +1,4 @@
-package com.matheus.apiestacionamento.exption;
+package com.matheus.apiestacionamento.exception;
 
 public class UsernameUniqueViolationException extends RuntimeException {
     public UsernameUniqueViolationException(String message) {

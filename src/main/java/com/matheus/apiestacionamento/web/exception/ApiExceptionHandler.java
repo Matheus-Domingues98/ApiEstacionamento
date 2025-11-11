@@ -2,7 +2,7 @@ package com.matheus.apiestacionamento.web.exception;
 
 import com.matheus.apiestacionamento.exception.EntityNotFoundException;
 import com.matheus.apiestacionamento.exception.PasswordArgumentNotValidException;
-import com.matheus.apiestacionamento.exption.UsernameUniqueViolationException;
+import com.matheus.apiestacionamento.exception.UsernameUniqueViolationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ApiExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorMessage> methodArgumentNotValidException(RuntimeException ex,
+    public ResponseEntity<ErrorMessage> methodArgumentNotValidException(MethodArgumentNotValidException ex,
                                                                         HttpServletRequest request,
                                                                         BindingResult result) {
         log.error("Api Error - ", ex);

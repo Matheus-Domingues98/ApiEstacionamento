@@ -3,13 +3,12 @@ package com.matheus.apiestacionamento.Service;
 import com.matheus.apiestacionamento.entities.Usuario;
 import com.matheus.apiestacionamento.exception.EntityNotFoundException;
 import com.matheus.apiestacionamento.exception.PasswordArgumentNotValidException;
-import com.matheus.apiestacionamento.exption.UsernameUniqueViolationException;
+import com.matheus.apiestacionamento.exception.UsernameUniqueViolationException;
 import com.matheus.apiestacionamento.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.List;
 
