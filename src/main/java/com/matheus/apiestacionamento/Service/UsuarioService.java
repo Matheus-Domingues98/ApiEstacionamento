@@ -1,9 +1,11 @@
 package com.matheus.apiestacionamento.Service;
 
 import com.matheus.apiestacionamento.entities.Usuario;
+import com.matheus.apiestacionamento.entities.enums.Role;
 import com.matheus.apiestacionamento.exception.EntityNotFoundException;
 import com.matheus.apiestacionamento.exception.PasswordArgumentNotValidException;
 import com.matheus.apiestacionamento.exception.UsernameUniqueViolationException;
+import com.matheus.apiestacionamento.jwt.JwtUtils;
 import com.matheus.apiestacionamento.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -45,7 +47,6 @@ public class UsuarioService {
         if (!user.getPassword().equals(senhaAtual)) {
             throw new PasswordArgumentNotValidException(String.format("Senha atual do id = %s não confere", id));
         }
-
         user.setPassword(novaSenha);
         return user;
     }
@@ -53,5 +54,16 @@ public class UsuarioService {
     @Transactional(readOnly = true)
     public List<Usuario> buscarTodos() {
         return usuarioRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Usuario buscarPorUsername(String username) {
+        return usuarioRepository.findByUsername(username).orElseThrow(
+                () -> new EntityNotFoundException(String.format("Usuario com '%s nao encontrado", username))
+        );
+    }
+
+    public Role buscarRolePorUsername(String username) {
+        return usuarioRepository.findRoleByUsername(username);
     }
 }
