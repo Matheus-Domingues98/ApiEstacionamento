@@ -9,6 +9,7 @@ import com.matheus.apiestacionamento.jwt.JwtUtils;
 import com.matheus.apiestacionamento.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,10 +20,12 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public Usuario salvar(Usuario obj) {
         try {
+            obj.setPassword(passwordEncoder.encode(obj.getPassword()));
             return usuarioRepository.save(obj);
         } catch (DataIntegrityViolationException ex) {
             throw new UsernameUniqueViolationException(String.format("Username '%s' ja cadastrado", obj.getUsername()));
@@ -44,10 +47,10 @@ public class UsuarioService {
 
         Usuario user = buscarPorId(id);
 
-        if (!user.getPassword().equals(senhaAtual)) {
+        if (!passwordEncoder.matches(senhaAtual, user.getPassword())) {
             throw new PasswordArgumentNotValidException(String.format("Senha atual do id = %s não confere", id));
         }
-        user.setPassword(novaSenha);
+        user.setPassword(passwordEncoder.encode(novaSenha));
         return user;
     }
 
