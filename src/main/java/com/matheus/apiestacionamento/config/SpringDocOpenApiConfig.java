@@ -1,9 +1,13 @@
 package com.matheus.apiestacionamento.config;
 
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +18,7 @@ public class SpringDocOpenApiConfig {
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
+                .components(new Components().addSecuritySchemes("security", securityScheme()))
                 .info(
                         new Info()
                                 .title("API estacionamento")
@@ -30,5 +35,16 @@ public class SpringDocOpenApiConfig {
                 .group("public")
                 .pathsToMatch("/api/**")
                 .build();
+    }
+
+    private SecurityScheme securityScheme() {
+        return new SecurityScheme()
+                .description("Insira token valido para prosseguir")
+                .type(SecurityScheme.Type.HTTP)
+                .in(SecurityScheme.In.HEADER)
+                .scheme("bearer")
+                .bearerFormat("JWT")
+                .name("security");
+
     }
 }
