@@ -1,5 +1,6 @@
 package com.matheus.apiestacionamento.config;
 
+import com.matheus.apiestacionamento.jwt.JwtAccessDeniedHandler;
 import com.matheus.apiestacionamento.jwt.JwtAuthenticationEntryPoint;
 import com.matheus.apiestacionamento.jwt.JwtAutorizationFilter;
 import org.springframework.context.annotation.Bean;
@@ -49,6 +50,7 @@ public class SpringSecurityConfig {
                 ).exceptionHandling(
                         exception -> exception
                                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+                                .accessDeniedHandler(new JwtAccessDeniedHandler())
                 )
                 .build();
     }

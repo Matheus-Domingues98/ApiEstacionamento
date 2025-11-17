@@ -74,10 +74,7 @@ public class UsuarioController {
             security = @SecurityRequirement(name = "security"),
             description = "Requisição exige um Bearer Token. Acesso restrito a ADMIN ou CLIENTE",
             responses = {
-                    @ApiResponse(responseCode = "204", description = "Senha atualizada com sucesso",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))),
-                    @ApiResponse(responseCode = "404", description = "Recusrso não encontrado",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "204", description = "Senha atualizada com sucesso"),
                     @ApiResponse(responseCode = "400", description = "Senha incorreta",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
                     @ApiResponse(responseCode = "403", description = "Usuario sem permissão para acessar este recurso",
@@ -89,7 +86,7 @@ public class UsuarioController {
     @PatchMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE') AND (#id == authentication.principal.id)")
     public ResponseEntity<Void> updatePassword(@PathVariable Long id, @Valid @RequestBody UsuarioSenhaDto obj) {
-        Usuario user = usuarioService.editarSenha(id, obj.getSenhaAtual(), obj.getNovaSenha(), obj.getConfirmaSenha());
+        usuarioService.editarSenha(id, obj.getSenhaAtual(), obj.getNovaSenha(), obj.getConfirmaSenha());
         return ResponseEntity.noContent().build(); // Retorna 204
     }
 

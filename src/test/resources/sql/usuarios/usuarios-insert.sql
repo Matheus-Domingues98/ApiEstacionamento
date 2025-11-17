@@ -1,4 +1,4 @@
 insert into usuarios (usuario_id, username, password, role)
-    values(100, 'ana@email.com', '353535', 'ROLE_ADMIN'),
-          (101, 'mariana@email.com', '343434', 'ROLE_CLIENTE'),
-          (102, 'joaozinho@email.com', '333333', 'ROLE_CLIENTE');
+    values(100, 'ana@email.com', '$2a$12$/KOX7cPri.2ijfEt2XBFBurXEFyd4cmDACr8wmed.YLZu7X5SM9ty', 'ROLE_ADMIN'),
+          (101, 'mariana@email.com', '$2a$12$o6XLB8yeIK8q7Ey6F30b8edOgblMhk0XHT2cJSwfMZIh1bw9P/S0W', 'ROLE_CLIENTE'), --343434
+          (102, 'joaozinho@email.com', '$2a$12$9AfZBzKIHW/q9ptye6OVOuUC2U7VCyAOpeVZZ1DXsf5RE6P7N25jC', 'ROLE_CLIENTE'); --333333
