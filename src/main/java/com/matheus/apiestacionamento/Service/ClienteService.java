@@ -4,6 +4,7 @@ import com.matheus.apiestacionamento.entities.Cliente;
 import com.matheus.apiestacionamento.exception.CpfUniqueViolationException;
 import com.matheus.apiestacionamento.exception.EntityNotFoundException;
 import com.matheus.apiestacionamento.repositories.ClienteRepository;
+import com.matheus.apiestacionamento.repositories.projection.ClienteProjection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -36,7 +37,7 @@ public class ClienteService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Cliente> buscarTodos(Pageable pageable) {
-        return  clienteRepository.findAll(pageable);
+    public Page<ClienteProjection> buscarTodos(Pageable pageable) {
+        return  clienteRepository.findAllPageable(pageable);
     }
 }

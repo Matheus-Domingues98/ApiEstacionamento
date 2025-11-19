@@ -4,16 +4,22 @@ import com.matheus.apiestacionamento.Service.ClienteService;
 import com.matheus.apiestacionamento.Service.UsuarioService;
 import com.matheus.apiestacionamento.entities.Cliente;
 import com.matheus.apiestacionamento.jwt.JwtUserDetails;
+import com.matheus.apiestacionamento.repositories.projection.ClienteProjection;
 import com.matheus.apiestacionamento.web.dto.ClienteCreateDto;
 import com.matheus.apiestacionamento.web.dto.ClienteResponseDto;
+import com.matheus.apiestacionamento.web.dto.PageableDto;
 import com.matheus.apiestacionamento.web.dto.UsuarioResponseDto;
 import com.matheus.apiestacionamento.web.dto.mapper.ClienteMapper;
+import com.matheus.apiestacionamento.web.dto.mapper.PageableMapper;
 import com.matheus.apiestacionamento.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +28,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-
 import org.springframework.web.bind.annotation.*;
 
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 
 
 @Tag(name = "Clientes", description = "Contem todas as operações relativas ao recurso de um clientes")
@@ -82,10 +88,36 @@ public class ClienteController {
         return  ResponseEntity.ok(ClienteMapper.toDto(cliente));
     }
 
+    @Operation(
+            summary = "Recuperar lista de clientes",
+            security = @SecurityRequirement(name = "security"),
+            description = "Requisição exige um Bearer Token. Acesso restrito a ADMIN",
+            parameters = {
+                    @Parameter(in = QUERY, name = "page",
+                        content = @Content(schema = @Schema(type = "integer", defaultValue = "20")),
+                        description = "Representa a pagina toda."
+                    ),
+                    @Parameter(in = QUERY, name = "size",
+                            content = @Content(schema = @Schema(type = "integer", defaultValue = "20")),
+                            description = "Representa o total de elementos por pagina."
+                    ),
+                    @Parameter(in = QUERY, name = "sort",
+                            array = @ArraySchema(schema = @Schema(type = "String", defaultValue = "id,asc")),
+                            description = "Representa a ordenação dos resultados. Aceita multiplos criterios de ordenação."
+                    ),
+            },
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Lista com todos os usuarios cadastrados",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = UsuarioResponseDto.class)))),
+                    @ApiResponse(responseCode = "403", description = "Usuario sem permissão para acessar este recurso",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+            }
+    )
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<Cliente>> getAll(Pageable pageable) {
-        Page<Cliente> clientes = clienteService.buscarTodos(pageable);
-        return  ResponseEntity.ok(clientes);
+    public ResponseEntity<PageableDto> getAll(Pageable pageable) {
+        Page<ClienteProjection> clientes = clienteService.buscarTodos(pageable);
+        return  ResponseEntity.ok(PageableMapper.toDto(clientes));
     }
 }
