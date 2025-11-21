@@ -25,6 +25,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -46,6 +48,7 @@ public class ClienteController {
             summary = "Criar um novo cliente",
             description = "Recurso para criar novo cliente vinculado a um usuario cadastrado. " +
             "Requisição exige uso de um bearer token. Acesso restrito a Role='CLIENTE' ",
+            security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Recurso criado com sucesso",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClienteResponseDto.class))),
@@ -70,11 +73,12 @@ public class ClienteController {
 
     @Operation(
             summary = "Recuperar cliente por ID",
+            security = @SecurityRequirement(name = "security"),
             description = "Recurso para localizar um cliente por ID." +
                     "Requisição exige uso de um bearer token. Acesso restrito a Role='ADMIN'",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Recurso localizado com sucesso",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioResponseDto.class))),
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClienteResponseDto.class))),
                     @ApiResponse(responseCode = "403", description = "Recurso não permitido ao perfil de CLIENTE",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
                     @ApiResponse(responseCode = "404", description = "Cliente não encontrado",
@@ -95,29 +99,48 @@ public class ClienteController {
             parameters = {
                     @Parameter(in = QUERY, name = "page",
                         content = @Content(schema = @Schema(type = "integer", defaultValue = "20")),
-                        description = "Representa a pagina toda."
+                        description = "Representa a pagina retornada."
                     ),
                     @Parameter(in = QUERY, name = "size",
                             content = @Content(schema = @Schema(type = "integer", defaultValue = "20")),
                             description = "Representa o total de elementos por pagina."
                     ),
-                    @Parameter(in = QUERY, name = "sort",
+                    @Parameter(in = QUERY, name = "sort", hidden = true,
                             array = @ArraySchema(schema = @Schema(type = "String", defaultValue = "id,asc")),
                             description = "Representa a ordenação dos resultados. Aceita multiplos criterios de ordenação."
                     ),
             },
             responses = {
-                    @ApiResponse(responseCode = "204", description = "Lista com todos os usuarios cadastrados",
-                            content = @Content(mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = UsuarioResponseDto.class)))),
-                    @ApiResponse(responseCode = "403", description = "Usuario sem permissão para acessar este recurso",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+                    @ApiResponse(responseCode = "200", description = "Recurso recuperado com sucesso",
+                            content = @Content(mediaType = "application/json; charset=utf-8",
+                                    schema = @Schema(implementation = ClienteResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "Recurso não permitido ao perfil de 'CLIENTE'",
+                            content = @Content(mediaType = "application/json; charset=utf-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
             }
     )
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PageableDto> getAll(Pageable pageable) {
+    public ResponseEntity<PageableDto> getAll(@Parameter(hidden = true) @PageableDefault(size = 5, sort = {"nome"}) Pageable pageable) {
         Page<ClienteProjection> clientes = clienteService.buscarTodos(pageable);
         return  ResponseEntity.ok(PageableMapper.toDto(clientes));
+    }
+
+    @Operation(
+            summary = "Recuperar dados do cliente autenticado",
+            security = @SecurityRequirement(name = "security"),
+            description ="Requisição exige uso de um bearer token. Acesso restrito a Role='CLIENTE'",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Recurso localizado com sucesso",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClienteResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "Recurso não permitido ao perfil de ADMIN",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+            }
+    )
+    @GetMapping("/detalhes")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<ClienteResponseDto> getDetalhes(@AuthenticationPrincipal JwtUserDetails userDetails) {
+        Cliente cliente = clienteService.buscarPorUsuarioId(userDetails.getId());
+        return  ResponseEntity.ok(ClienteMapper.toDto(cliente));
     }
 }

@@ -73,9 +73,10 @@ public class JwtUtils {
     public static boolean isTokenValid(String token) {
         try {
             return Jwts.parser()
-                    .setSigningKey(generateKey()).build()
-                    .parseClaimsJws(refactorToken(token))
-                    .getBody()
+                    .verifyWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8)))
+                    .build()
+                    .parseSignedClaims(refactorToken(token))
+                    .getPayload()
                     .getExpiration()
                     .after(new Date());
         } catch (JwtException e) {

@@ -2,6 +2,7 @@ package com.matheus.apiestacionamento;
 
 import com.matheus.apiestacionamento.web.dto.ClienteCreateDto;
 import com.matheus.apiestacionamento.web.dto.ClienteResponseDto;
+import com.matheus.apiestacionamento.web.dto.PageableDto;
 import com.matheus.apiestacionamento.web.exception.ErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,6 +155,89 @@ public class ClienteIT {
                 .get()
                 .uri("/api/v1/clientes/10")
                 .headers(JwtAuthentication.getAuthorizationHeader(webClient, "mariana@email.com", "343434"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+    }
+
+    @Test
+    public void buscarCliente_ComPaginacaoPeloAdmin_RetornarClientesComStatus200() {
+
+        PageableDto responseBody = webClient
+                .get()
+                .uri("/api/v1/clientes")
+                .headers(JwtAuthentication.getAuthorizationHeader(webClient, "ana@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(PageableDto.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getContent().size()).isEqualTo(2);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getNumber()).isEqualTo(0);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getTotalPages()).isEqualTo(1);
+
+        responseBody = webClient
+                .get()
+                .uri("/api/v1/clientes?size=1&page=1")
+                .headers(JwtAuthentication.getAuthorizationHeader(webClient, "ana@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(PageableDto.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getContent().size()).isEqualTo(1);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getNumber()).isEqualTo(1);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getTotalPages()).isEqualTo(2);
+    }
+
+    @Test
+    public void buscarCliente_ComPaginacaoPeloCliente_RetornarErrorMenssageComStatus403() {
+
+        ErrorMessage responseBody = webClient
+                .get()
+                .uri("/api/v1/clientes")
+                .headers(JwtAuthentication.getAuthorizationHeader(webClient, "mariana@email.com", "343434"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+    }
+
+    @Test
+    public void buscarCliente_ComDadosDoTokenDeCliente_RetornarClienteComStatus200() {
+
+        ClienteResponseDto responseBody = webClient
+                .get()
+                .uri("/api/v1/clientes/detalhes")
+                .headers(JwtAuthentication.getAuthorizationHeader(webClient, "mariana@email.com", "343434"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ClienteResponseDto.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getCpf()).isEqualTo("90181152070");
+        org.assertj.core.api.Assertions.assertThat(responseBody.getNome()).isEqualTo("Mariana Silva");
+        org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(10);
+
+    }
+
+    @Test
+    public void buscarCliente_ComDadosDoTokenDeAdmin_RetornarErrorMenssageComStatus403() {
+
+        ErrorMessage responseBody = webClient
+                .get()
+                .uri("/api/v1/clientes/detalhes")
+                .headers(JwtAuthentication.getAuthorizationHeader(webClient, "ana@email.com", "123456"))
                 .exchange()
                 .expectStatus().isForbidden()
                 .expectBody(ErrorMessage.class)
