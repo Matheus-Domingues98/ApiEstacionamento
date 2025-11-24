@@ -1,9 +1,6 @@
 package com.matheus.apiestacionamento.web.exception;
 
-import com.matheus.apiestacionamento.exception.CpfUniqueViolationException;
-import com.matheus.apiestacionamento.exception.EntityNotFoundException;
-import com.matheus.apiestacionamento.exception.PasswordArgumentNotValidException;
-import com.matheus.apiestacionamento.exception.UsernameUniqueViolationException;
+import com.matheus.apiestacionamento.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,7 +28,7 @@ public class ApiExceptionHandler {
                 .body(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_ENTITY, "Campo(s) inavalido(s)", result));
     }
 
-    @ExceptionHandler({UsernameUniqueViolationException.class, CpfUniqueViolationException.class})
+    @ExceptionHandler({UsernameUniqueViolationException.class, CpfUniqueViolationException.class, CodigoUniqueViolationException.class})
     public ResponseEntity<ErrorMessage> uniqueViolationException(RuntimeException ex,
                                                                         HttpServletRequest request) {
         log.error("Api Error - ", ex);
