@@ -1,6 +1,6 @@
 package com.matheus.apiestacionamento.web.controller;
 
-import com.matheus.apiestacionamento.Service.UsuarioService;
+import com.matheus.apiestacionamento.service.UsuarioService;
 import com.matheus.apiestacionamento.entities.Usuario;
 import com.matheus.apiestacionamento.web.dto.UsuarioCreateDto;
 import com.matheus.apiestacionamento.web.dto.UsuarioResponseDto;

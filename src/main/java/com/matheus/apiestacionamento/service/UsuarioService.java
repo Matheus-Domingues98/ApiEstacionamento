@@ -1,11 +1,10 @@
-package com.matheus.apiestacionamento.Service;
+package com.matheus.apiestacionamento.service;
 
 import com.matheus.apiestacionamento.entities.Usuario;
 import com.matheus.apiestacionamento.entities.enums.Role;
 import com.matheus.apiestacionamento.exception.EntityNotFoundException;
 import com.matheus.apiestacionamento.exception.PasswordArgumentNotValidException;
 import com.matheus.apiestacionamento.exception.UsernameUniqueViolationException;
-import com.matheus.apiestacionamento.jwt.JwtUtils;
 import com.matheus.apiestacionamento.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;

@@ -1,6 +1,6 @@
 package com.matheus.apiestacionamento.jwt;
 
-import com.matheus.apiestacionamento.Service.UsuarioService;
+import com.matheus.apiestacionamento.service.UsuarioService;
 import com.matheus.apiestacionamento.entities.Usuario;
 import com.matheus.apiestacionamento.entities.enums.Role;
 import lombok.RequiredArgsConstructor;

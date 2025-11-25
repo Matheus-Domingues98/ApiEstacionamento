@@ -1,14 +1,13 @@
 package com.matheus.apiestacionamento.web.controller;
 
-import com.matheus.apiestacionamento.Service.ClienteService;
-import com.matheus.apiestacionamento.Service.UsuarioService;
+import com.matheus.apiestacionamento.service.ClienteService;
+import com.matheus.apiestacionamento.service.UsuarioService;
 import com.matheus.apiestacionamento.entities.Cliente;
 import com.matheus.apiestacionamento.jwt.JwtUserDetails;
 import com.matheus.apiestacionamento.repositories.projection.ClienteProjection;
 import com.matheus.apiestacionamento.web.dto.ClienteCreateDto;
 import com.matheus.apiestacionamento.web.dto.ClienteResponseDto;
 import com.matheus.apiestacionamento.web.dto.PageableDto;
-import com.matheus.apiestacionamento.web.dto.UsuarioResponseDto;
 import com.matheus.apiestacionamento.web.dto.mapper.ClienteMapper;
 import com.matheus.apiestacionamento.web.dto.mapper.PageableMapper;
 import com.matheus.apiestacionamento.web.exception.ErrorMessage;
@@ -25,7 +24,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

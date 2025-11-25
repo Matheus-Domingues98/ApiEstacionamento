@@ -1,4 +1,4 @@
-package com.matheus.apiestacionamento.Service;
+package com.matheus.apiestacionamento.service;
 
 import com.matheus.apiestacionamento.entities.Vaga;
 import com.matheus.apiestacionamento.exception.CodigoUniqueViolationException;

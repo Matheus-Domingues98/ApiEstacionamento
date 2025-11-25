@@ -1,8 +1,7 @@
 package com.matheus.apiestacionamento.web.controller;
 
-import com.matheus.apiestacionamento.Service.VagaService;
+import com.matheus.apiestacionamento.service.VagaService;
 import com.matheus.apiestacionamento.entities.Vaga;
-import com.matheus.apiestacionamento.web.dto.UsuarioResponseDto;
 import com.matheus.apiestacionamento.web.dto.VagaCreateDto;
 import com.matheus.apiestacionamento.web.dto.VagaResponseDto;
 import com.matheus.apiestacionamento.web.dto.mapper.VagaMapper;
